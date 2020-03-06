@@ -13,7 +13,8 @@ export class AuthController {
   @ApiBody({ type: AuthCredentialsDto })
   @Post('/signup')
   async signUp(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto): Promise<void> {
-      await this.authService.signUp(authCredentialsDto);
+    console.log('signUp3:')
+    return await this.authService.signUp(authCredentialsDto);
   }
 
   @ApiBody({ type: AuthCredentialsDto })
@@ -21,7 +22,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({description: 'Invalid credentials.'})
   @Post('/signin')
   async signIn(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto): Promise<{accessToken: string}> {
-      return await this.authService.signIn(authCredentialsDto);
+    return await this.authService.signIn(authCredentialsDto);
   }
 
   @Post('/test')
@@ -31,7 +32,7 @@ export class AuthController {
   }
 
   @Get('/user')
-  // @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard())
   async getAllUsers() {
     return await this.authService.getAllUsers()
   }

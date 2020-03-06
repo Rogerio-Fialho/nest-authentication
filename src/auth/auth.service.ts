@@ -17,6 +17,7 @@ export class AuthService {
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    console.log('entrou signUp')
     
     const { password } = authCredentialsDto;
     
@@ -25,7 +26,8 @@ export class AuthService {
     user.password = await this.hashPassword(password, 10);
 
     try {
-      return await user.save();
+      await user.save();
+      return user;
     } catch (error) {
       if(error.code == '11000') {
         throw new ConflictException('E-mail already exists.');

@@ -1,22 +1,13 @@
-FROM node:13.8.0
+FROM node:10 AS builder
 
-ENV NODE_ENV development
-
-ADD ["package.json", "package-lock.json" , "/sources/"]
+ADD ["package.json", "package-lock.json", "/sources/"]
 WORKDIR /sources
 RUN npm ci
+COPY . .
+RUN npm run build
 
-ADD ./ /sources
-
-FROM node:13.8.0-alpine
-
-COPY --from=0 /sources/dist /sources
+FROM node:10-alpine
+COPY --from=builder ./sources ./sources
 WORKDIR /sources
-
-ENV NODE_ENV development
-
-USER node
-
-EXPOSE 8080
-
-CMD ["run", "start:dev"]
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
