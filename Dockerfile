@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 FROM node:10-alpine
-COPY --from=builder ./sources ./sources
+COPY --from=builder /sources /sources
 WORKDIR /sources
 EXPOSE 3000
 CMD ["npm", "run", "start:dev"]

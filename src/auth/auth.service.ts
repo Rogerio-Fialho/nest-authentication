@@ -3,9 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './interfaces/user.interface';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import * as express from 'express';
 
 @Injectable()
 export class AuthService {
@@ -13,23 +14,19 @@ export class AuthService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
     private jwtService: JwtService,
-    private httpService: HttpService
+    private httpService: HttpService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    console.log('entrou signUp')
-    
     const { password } = authCredentialsDto;
-    
     const user = this.userModel(authCredentialsDto);
 
     user.password = await this.hashPassword(password, 10);
 
     try {
       await user.save();
-      return user;
     } catch (error) {
-      if(error.code == '11000') {
+      if (error.code === '11000') {
         throw new ConflictException('E-mail already exists.');
       } else {
         throw new InternalServerErrorException();
@@ -64,6 +61,14 @@ export class AuthService {
 
   }
 
+  authenticatedUser() {
+
+  }
+
+  async login(response: express.Response ) {
+    return response.redirect(302, 'http://10.80.15.43/login/Jgreo4429kklenjklehjlh23tu83tu3iogegkljqegnrngr');
+  }
+
   async getAllUsers() {
     return await this.userModel.find().exec();
   }
@@ -78,6 +83,7 @@ export class AuthService {
   }
 
   private async hashPassword(password: string, saltRounds: number): Promise<string> {
+    console.log('bcript')
     return await bcrypt.hash(password, saltRounds);
   }
 }
